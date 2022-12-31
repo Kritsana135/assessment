@@ -40,11 +40,11 @@ func initDb() {
 	schema := `
 		CREATE TABLE IF NOT EXISTS expenses (
 			id SERIAL PRIMARY KEY,
-			title VARCHAR(255) NOT NULL,
-			amount numeric(19,4) NOT NULL,
-			note VARCHAR(255),
-			tags text[]
-		)
+			title TEXT,
+			amount FLOAT,
+			note TEXT,
+			tags TEXT[]
+		);
 	`
 
 	result := db.MustExec(schema)
