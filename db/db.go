@@ -23,6 +23,8 @@ func Connect() *sqlx.DB {
 
 	logrus.Info("Database connected")
 
+	initDb()
+
 	return db
 }
 
@@ -32,4 +34,25 @@ func GetDB() *sqlx.DB {
 
 func Close() {
 	db.Close()
+}
+
+func initDb() {
+	schema := `
+		CREATE TABLE IF NOT EXISTS expenses (
+			id SERIAL PRIMARY KEY,
+			title VARCHAR(255) NOT NULL,
+			amount numeric(19,4) NOT NULL,
+			note VARCHAR(255),
+			tags text[]
+		)
+	`
+
+	result := db.MustExec(schema)
+
+	_, err := result.RowsAffected()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	logrus.Info("Database initialized")
 }
