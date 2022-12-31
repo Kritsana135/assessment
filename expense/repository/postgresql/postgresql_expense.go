@@ -1,4 +1,4 @@
-package repositories
+package postgresql
 
 import (
 	"github.com/Kritsana135/assessment/domain"
