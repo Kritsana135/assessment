@@ -8,6 +8,7 @@ import (
 
 	"github.com/Kritsana135/assessment/db"
 	"github.com/Kritsana135/assessment/expense/delivery/http_"
+	"github.com/Kritsana135/assessment/expense/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -28,9 +29,12 @@ func main() {
 
 	db.Connect()
 
+	expUCase := usecase.NewExpUsecase()
+
 	r := gin.Default()
 	r.GET("/health", GetHealthCheck)
-	http_.NewExpenseHandler(&r.RouterGroup)
+
+	http_.NewExpenseHandler(&r.RouterGroup, expUCase)
 
 	r.Run(":" + os.Getenv("PORT"))
 }

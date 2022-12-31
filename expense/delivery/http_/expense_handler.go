@@ -4,14 +4,19 @@ import (
 	"net/http"
 
 	"github.com/Kritsana135/assessment/domain"
+	"github.com/Kritsana135/assessment/domain/apperrors"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type ExpenseHandler struct {
+	expUCase domain.ExpenseUseCase
 }
 
-func NewExpenseHandler(r *gin.RouterGroup) {
-	handler := &ExpenseHandler{}
+func NewExpenseHandler(r *gin.RouterGroup, expUCase domain.ExpenseUseCase) {
+	handler := &ExpenseHandler{
+		expUCase,
+	}
 
 	er := r.Group("/expenses")
 
@@ -29,7 +34,14 @@ func (h *ExpenseHandler) CreateExpense(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	res, err := h.expUCase.CreateExpense(c.Request.Context(), body)
+	if err != nil {
+		logrus.Error(err)
+		c.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }
 
 func (h *ExpenseHandler) GetExpenses(c *gin.Context) {}
