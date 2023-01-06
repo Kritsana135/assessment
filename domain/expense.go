@@ -16,9 +16,11 @@ type (
 	}
 	ExpenseRepository interface {
 		Create(ctx context.Context, expense *ExpenseTable) error
+		GetExpenses(ctx context.Context, id uint64) (ExpenseTable, error)
 	}
 	ExpenseUseCase interface {
 		CreateExpense(ctx context.Context, req CrateExpenseReq) (ExpenseTable, error)
+		GetExpenses(ctx context.Context, id uint64) (ExpenseTable, error)
 	}
 	CrateExpenseReq struct {
 		Title  string   `json:"title" binding:"required"`

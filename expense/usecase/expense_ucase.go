@@ -2,14 +2,30 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Kritsana135/assessment/domain"
 	"github.com/Kritsana135/assessment/domain/apperrors"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type expenseUsecase struct {
 	expenseRepo domain.ExpenseRepository
+}
+
+// GetExpenses implements domain.ExpenseUseCase
+func (e *expenseUsecase) GetExpenses(ctx context.Context, id uint64) (domain.ExpenseTable, error) {
+	expense, err := e.expenseRepo.GetExpenses(ctx, id)
+	if err != nil {
+		logrus.Error(err)
+		if err == gorm.ErrRecordNotFound {
+			return expense, apperrors.NewNotFound("expense", fmt.Sprint(id))
+		}
+		return expense, apperrors.NewInternal()
+	}
+
+	return expense, err
 }
 
 // CreateExpense implements domain.ExpenseUseCase
