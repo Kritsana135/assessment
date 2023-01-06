@@ -11,6 +11,16 @@ type expenseRepo struct {
 	db *gorm.DB
 }
 
+// GetExpenses implements domain.ExpenseRepository
+func (e *expenseRepo) GetExpenses(ctx context.Context) ([]domain.ExpenseTable, error) {
+	db := e.db.WithContext(ctx)
+
+	var expenses []domain.ExpenseTable
+	err := db.Table("expenses").Find(&expenses).Error
+
+	return expenses, err
+}
+
 // UpdateExpense implements domain.ExpenseRepository
 func (e *expenseRepo) UpdateExpense(ctx context.Context, id uint64, expense *domain.ExpenseTable) error {
 	db := e.db.WithContext(ctx)
@@ -27,8 +37,8 @@ func (e *expenseRepo) UpdateExpense(ctx context.Context, id uint64, expense *dom
 	return nil
 }
 
-// GetExpenses implements domain.ExpenseRepository
-func (e *expenseRepo) GetExpenses(ctx context.Context, id uint64) (domain.ExpenseTable, error) {
+// GetExpensesById implements domain.ExpenseRepository
+func (e *expenseRepo) GetExpensesById(ctx context.Context, id uint64) (domain.ExpenseTable, error) {
 	db := e.db.WithContext(ctx)
 
 	var expense domain.ExpenseTable

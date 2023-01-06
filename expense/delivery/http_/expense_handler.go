@@ -48,7 +48,14 @@ func (h *ExpenseHandler) CreateExpense(c *gin.Context) {
 }
 
 func (h *ExpenseHandler) GetExpenses(ctx *gin.Context) {
+	res, err := h.expUCase.GetExpenses(ctx.Request.Context())
+	if err != nil {
+		logrus.Error(err)
+		ctx.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
+		return
+	}
 
+	ctx.JSON(http.StatusOK, res)
 }
 
 func (h *ExpenseHandler) GetExpensesById(ctx *gin.Context) {
@@ -60,7 +67,7 @@ func (h *ExpenseHandler) GetExpensesById(ctx *gin.Context) {
 		return
 	}
 
-	res, err := h.expUCase.GetExpenses(ctx.Request.Context(), uId)
+	res, err := h.expUCase.GetExpensesById(ctx.Request.Context(), uId)
 	if err != nil {
 		logrus.Error(err)
 		ctx.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
