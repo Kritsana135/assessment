@@ -17,8 +17,8 @@ type (
 		CreateExpense(ctx context.Context, req CrateExpenseReq) (ExpenseTable, error)
 	}
 	CrateExpenseReq struct {
-		Title  string   `json:"title"`
-		Amount float64  `json:"amount"`
+		Title  string   `json:"title" binding:"required"`
+		Amount float64  `json:"amount" binding:"required"`
 		Note   string   `json:"note"`
 		Tags   []string `json:"tags"`
 	}
