@@ -3,6 +3,7 @@ package db
 import (
 	"log"
 
+	"github.com/Kritsana135/assessment/domain"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
@@ -37,7 +38,7 @@ func ConnectDB() *gorm.DB {
 
 	autoMigrate := viper.GetBool("AUTO_MIGRATE")
 	if autoMigrate {
-		db.AutoMigrate()
+		db.AutoMigrate(&domain.ExpenseTable{})
 	}
 
 	return db

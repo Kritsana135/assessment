@@ -14,7 +14,7 @@ type expenseRepo struct {
 func (e *expenseRepo) Create(ctx context.Context, expense *domain.ExpenseTable) error {
 	db := e.db.WithContext(ctx)
 
-	return db.Create(expense).Error
+	return db.Table("expenses").Create(expense).Error
 }
 
 func NewExpenseRepo(db *gorm.DB) domain.ExpenseRepository {
