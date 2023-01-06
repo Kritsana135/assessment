@@ -70,4 +70,27 @@ func (h *ExpenseHandler) GetExpensesById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (h *ExpenseHandler) UpdateExpense(c *gin.Context) {}
+func (h *ExpenseHandler) UpdateExpense(ctx *gin.Context) {
+	id := ctx.Param("id")
+	uId, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		logrus.Error(err)
+		ctx.JSON(http.StatusBadRequest, domain.BaseResponse{Message: "invalid id"})
+		return
+	}
+
+	var body domain.UpdateExpenseReq
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.JSON(http.StatusBadRequest, domain.BaseResponse{Message: err.Error()})
+		return
+	}
+
+	res, err := h.expUCase.UpdateExpense(ctx.Request.Context(), uId, body)
+	if err != nil {
+		logrus.Error(err)
+		ctx.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, res)
+}
