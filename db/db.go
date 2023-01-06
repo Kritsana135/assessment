@@ -1,58 +1,56 @@
 package db
 
 import (
-	"fmt"
 	"log"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-var db *sqlx.DB
+var db *gorm.DB
 
-func Connect() *sqlx.DB {
+func ConnectDB() *gorm.DB {
+	isRelase := viper.GetString("GIN_MODE") == "release"
+	var gormConfig *gorm.Config
+	if !isRelase {
+		gormConfig = &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		}
+	} else {
+		gormConfig = &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Silent),
+		}
+	}
+
+	url := viper.GetString("DATABASE_URL")
+	dial := postgres.Open(url)
 	var err error
-	dsn := fmt.Sprintf(
-		"user=%v password=%v host=%v dbname=%v sslmode=disable port=%v",
-		"postgres", "postgres", "localhost", "postgres", 5432) // TODO: move to .env
-
-	db, err = sqlx.Connect("postgres", dsn)
+	db, err = gorm.Open(dial, gormConfig)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal("connect db error : ", err)
 	}
 
-	logrus.Info("Database connected")
+	logrus.Info("database connected")
 
-	initDb()
+	autoMigrate := viper.GetBool("AUTO_MIGRATE")
+	if autoMigrate {
+		db.AutoMigrate()
+	}
 
 	return db
 }
 
-func GetDB() *sqlx.DB {
-	return db
-}
-
-func Close() {
-	db.Close()
-}
-
-func initDb() {
-	schema := `
-		CREATE TABLE IF NOT EXISTS expenses (
-			id SERIAL PRIMARY KEY,
-			title TEXT,
-			amount FLOAT,
-			note TEXT,
-			tags TEXT[]
-		);
-	`
-
-	result := db.MustExec(schema)
-
-	_, err := result.RowsAffected()
+func CloseDatabase() {
+	sqlDB, err := db.DB()
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
+	sqlDB.Close()
+}
 
-	logrus.Info("Database initialized")
+func GetDb() *gorm.DB {
+	return db
 }

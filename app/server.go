@@ -1,18 +1,17 @@
 package main
 
 import (
-	"log"
 	"net/http"
-	"os"
 	"time"
 
+	"github.com/Kritsana135/assessment/config"
 	"github.com/Kritsana135/assessment/db"
 	"github.com/Kritsana135/assessment/expense/delivery/http_"
 	"github.com/Kritsana135/assessment/expense/usecase"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func init() {
@@ -22,12 +21,9 @@ func init() {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	config.LoadConfig("./")
 
-	db.Connect()
+	db.ConnectDB()
 
 	expUCase := usecase.NewExpUsecase()
 
@@ -36,7 +32,7 @@ func main() {
 
 	http_.NewExpenseHandler(&r.RouterGroup, expUCase)
 
-	r.Run(":" + os.Getenv("PORT"))
+	r.Run(":" + viper.GetString("PORT"))
 }
 
 type ResponseHealthCheck struct {
