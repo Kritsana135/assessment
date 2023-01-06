@@ -14,6 +14,28 @@ type expenseUsecase struct {
 	expenseRepo domain.ExpenseRepository
 }
 
+// UpdateExpense implements domain.ExpenseUseCase
+func (e *expenseUsecase) UpdateExpense(ctx context.Context, id uint64, req domain.UpdateExpenseReq) (domain.ExpenseTable, error) {
+	expense := domain.ExpenseTable{
+		ID:     int(id),
+		Title:  req.Title,
+		Amount: req.Amount,
+		Note:   req.Note,
+		Tags:   req.Tags,
+	}
+
+	err := e.expenseRepo.UpdateExpense(ctx, id, &expense)
+	if err != nil {
+		logrus.Error(err)
+		if err == gorm.ErrRecordNotFound {
+			return expense, apperrors.NewNotFound("expense", fmt.Sprint(id))
+		}
+		return expense, apperrors.NewInternal()
+	}
+
+	return expense, err
+}
+
 // GetExpenses implements domain.ExpenseUseCase
 func (e *expenseUsecase) GetExpenses(ctx context.Context, id uint64) (domain.ExpenseTable, error) {
 	expense, err := e.expenseRepo.GetExpenses(ctx, id)
