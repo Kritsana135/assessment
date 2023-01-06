@@ -7,6 +7,7 @@ import (
 	"github.com/Kritsana135/assessment/config"
 	"github.com/Kritsana135/assessment/db"
 	"github.com/Kritsana135/assessment/expense/delivery/http_"
+	"github.com/Kritsana135/assessment/expense/repository/postgresql"
 	"github.com/Kritsana135/assessment/expense/usecase"
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -23,9 +24,10 @@ func init() {
 func main() {
 	config.LoadConfig("./")
 
-	db.ConnectDB()
+	connection := db.ConnectDB()
 
-	expUCase := usecase.NewExpUsecase()
+	expRepo := postgresql.NewExpenseRepo(connection)
+	expUCase := usecase.NewExpUsecase(expRepo)
 
 	r := gin.Default()
 	r.GET("/health", GetHealthCheck)
