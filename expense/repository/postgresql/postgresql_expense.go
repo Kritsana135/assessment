@@ -1,19 +1,23 @@
 package postgresql
 
 import (
+	"context"
+
 	"github.com/Kritsana135/assessment/domain"
-	"github.com/jmoiron/sqlx"
+	"gorm.io/gorm"
 )
 
 type expenseRepo struct {
-	db *sqlx.DB
+	db *gorm.DB
 }
 
-func (*expenseRepo) Create(expense *domain.ExpenseTable) error {
-	panic("unimplemented")
+func (e *expenseRepo) Create(ctx context.Context, expense *domain.ExpenseTable) error {
+	db := e.db.WithContext(ctx)
+
+	return db.Create(expense).Error
 }
 
-func NewExpenseRepo(db *sqlx.DB) domain.ExpenseRepository {
+func NewExpenseRepo(db *gorm.DB) domain.ExpenseRepository {
 	return &expenseRepo{
 		db: db,
 	}

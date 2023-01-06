@@ -11,7 +11,7 @@ type (
 		Tags   []string `json:"tags" db:"tags"`
 	}
 	ExpenseRepository interface {
-		Create(expense *ExpenseTable) error
+		Create(ctx context.Context, expense *ExpenseTable) error
 	}
 	ExpenseUseCase interface {
 		CreateExpense(ctx context.Context, req CrateExpenseReq) (ExpenseTable, error)
