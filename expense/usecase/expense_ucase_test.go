@@ -10,6 +10,7 @@ import (
 	"github.com/Kritsana135/assessment/domain/mocks"
 	"github.com/Kritsana135/assessment/expense/usecase"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestGetExpenses(t *testing.T) {
@@ -58,6 +59,41 @@ func TestCreateExpense(t *testing.T) {
 		expUCase := usecase.NewExpUsecase(mockExpenseRepo)
 
 		_, err := expUCase.CreateExpense(ctx, domain.CreateExpenseReq{Title: "test", Amount: 100, Note: "test"})
+
+		assert.NoError(t, err)
+	})
+}
+
+func TestGetExpensesById(t *testing.T) {
+	ctx := context.Background()
+	t.Run("geu_1: error when get", func(t *testing.T) {
+		mockExpenseRepo := mocks.NewExpenseRepository(t)
+		mockExpenseRepo.On("GetExpensesById", ctx, uint64(1)).Return(domain.ExpenseTable{}, errors.New("error"))
+		expUCase := usecase.NewExpUsecase(mockExpenseRepo)
+
+		_, err := expUCase.GetExpensesById(ctx, 1)
+
+		assert.Error(t, err)
+		assert.Equal(t, apperrors.NewInternal().Message, err.Error())
+	})
+
+	t.Run("geu_2: error not found", func(t *testing.T) {
+		mockExpenseRepo := mocks.NewExpenseRepository(t)
+		mockExpenseRepo.On("GetExpensesById", ctx, uint64(1)).Return(domain.ExpenseTable{}, gorm.ErrRecordNotFound)
+		expUCase := usecase.NewExpUsecase(mockExpenseRepo)
+
+		_, err := expUCase.GetExpensesById(ctx, 1)
+
+		assert.Error(t, err)
+		assert.Equal(t, 404, apperrors.Status(err))
+	})
+
+	t.Run("geu_3: success", func(t *testing.T) {
+		mockExpenseRepo := mocks.NewExpenseRepository(t)
+		mockExpenseRepo.On("GetExpensesById", ctx, uint64(1)).Return(domain.ExpenseTable{}, nil)
+		expUCase := usecase.NewExpUsecase(mockExpenseRepo)
+
+		_, err := expUCase.GetExpensesById(ctx, 1)
 
 		assert.NoError(t, err)
 	})

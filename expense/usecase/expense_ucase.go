@@ -48,7 +48,6 @@ func (e *expenseUsecase) UpdateExpense(ctx context.Context, id uint64, req domai
 	return expense, err
 }
 
-// TODO: add test
 // GetExpensesById implements domain.ExpenseUseCase
 func (e *expenseUsecase) GetExpensesById(ctx context.Context, id uint64) (domain.ExpenseTable, error) {
 	expense, err := e.expenseRepo.GetExpensesById(ctx, id)
