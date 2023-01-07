@@ -209,3 +209,120 @@ func TestGetExpensesById(t *testing.T) {
 		assert.Equal(t, "night market", res.Title)
 	})
 }
+
+func TestUpdateExpense(t *testing.T) {
+	t.Run("ueh_1:should get bad request status:invalid id", func(t *testing.T) {
+		body := `{
+				  "title": "night market",
+				  "amount": 79,
+				  "note": "night market promotion discount 10 bath",
+				  "tags": ["food", "beverage"]
+			     }`
+
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+		ctx.Request.Header.Set("Content-Type", "application/json")
+		ctx.Params = gin.Params{{Key: "id", Value: "abc"}}
+
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte(body)))
+
+		handler := http_.ExpenseHandler{}
+
+		handler.UpdateExpense(ctx)
+
+		var res domain.BaseResponse
+		json.NewDecoder(w.Body).Decode(&res)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Equal(t, "invalid id", res.Message)
+	})
+
+	t.Run("ueh_2:should get bad request status:invalid body", func(t *testing.T) {
+		body := `{
+				"amount": xx,
+				"note": "night market promotion discount 10 bath",
+				"tags": ["food", "beverage"]
+			}`
+
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+		ctx.Request.Header.Set("Content-Type", "application/json")
+		ctx.Params = gin.Params{{Key: "id", Value: "1"}}
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte(body)))
+
+		handler := http_.ExpenseHandler{}
+
+		handler.UpdateExpense(ctx)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+	t.Run("ueh_3:should get error when update expense", func(t *testing.T) {
+		body := `{
+				  "title": "night market",
+				  "amount": 79,
+				  "note": "night market promotion discount 10 bath",
+				  "tags": ["food", "beverage"]
+			     }`
+
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+		ctx.Request.Header.Set("Content-Type", "application/json")
+		ctx.Params = gin.Params{{Key: "id", Value: "1"}}
+
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte(body)))
+
+		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
+		parseBody := domain.UpdateExpenseReq{
+			Title:  "night market",
+			Amount: 79,
+			Note:   "night market promotion discount 10 bath",
+			Tags:   []string{"food", "beverage"},
+		}
+		mockExpenseUseCase.On("UpdateExpense", ctx.Request.Context(), uint64(1), parseBody).
+			Return(domain.ExpenseTable{}, apperrors.NewInternal())
+		handler := http_.ExpenseHandler{
+			ExpUCase: mockExpenseUseCase,
+		}
+
+		handler.UpdateExpense(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("ueh_4:should get 200 status", func(t *testing.T) {
+		body := `{
+				  "title": "night market",
+				  "amount": 79,
+				  "note": "night market promotion discount 10 bath",
+				  "tags": ["food", "beverage"]
+			     }`
+
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+		ctx.Request.Header.Set("Content-Type", "application/json")
+		ctx.Params = gin.Params{{Key: "id", Value: "1"}}
+
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte(body)))
+
+		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
+		parseBody := domain.UpdateExpenseReq{
+			Title:  "night market",
+			Amount: 79,
+			Note:   "night market promotion discount 10 bath",
+			Tags:   []string{"food", "beverage"},
+		}
+		mockExpenseUseCase.On("UpdateExpense", ctx.Request.Context(), uint64(1), parseBody).
+			Return(domain.ExpenseTable{Title: "night market"}, nil)
+		handler := http_.ExpenseHandler{
+			ExpUCase: mockExpenseUseCase,
+		}
+
+		handler.UpdateExpense(ctx)
+
+		var res domain.ExpenseTable
+		json.NewDecoder(w.Body).Decode(&res)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "night market", res.Title)
+	})
+}
