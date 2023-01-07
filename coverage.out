@@ -1,4 +1,21 @@
 mode: set
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:18.90,20.16 2 1
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:25.2,25.22 1 1
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:20.16,23.3 2 1
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:29.130,39.16 3 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:47.2,47.21 1 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:39.16,41.36 2 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:44.3,44.42 1 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:41.36,43.4 1 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:51.103,53.16 2 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:61.2,61.21 1 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:53.16,55.36 2 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:58.3,58.42 1 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:55.36,57.4 1 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:65.118,74.16 3 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:79.2,79.21 1 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:74.16,77.3 2 0
+github.com/Kritsana135/assessment/expense/usecase/expense_ucase.go:82.80,86.2 1 1
 github.com/Kritsana135/assessment/expense/delivery/http_/expense_handler.go:17.76,23.2 3 0
 github.com/Kritsana135/assessment/expense/delivery/http_/expense_handler.go:23.2,28.3 4 0
 github.com/Kritsana135/assessment/expense/delivery/http_/expense_handler.go:32.56,35.48 2 1

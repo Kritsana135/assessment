@@ -27,11 +27,14 @@ func TestGetExpenses(t *testing.T) {
 
 	t.Run("geu_2: success", func(t *testing.T) {
 		mockExpenseRepo := mocks.NewExpenseRepository(t)
-		mockExpenseRepo.On("GetExpenses", ctx).Return([]domain.ExpenseTable{}, nil)
+		mockExpenseRepo.On("GetExpenses", ctx).Return([]domain.ExpenseTable{
+			{ID: 1, Title: "test", Amount: 100, Note: "test"},
+		}, nil)
 		expUCase := usecase.NewExpUsecase(mockExpenseRepo)
 
-		_, err := expUCase.GetExpenses(ctx)
+		expense, err := expUCase.GetExpenses(ctx)
 
 		assert.NoError(t, err)
+		assert.Equal(t, int(1), expense[0].ID)
 	})
 }
