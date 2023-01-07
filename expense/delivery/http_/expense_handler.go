@@ -11,12 +11,12 @@ import (
 )
 
 type ExpenseHandler struct {
-	expUCase domain.ExpenseUseCase
+	ExpUCase domain.ExpenseUseCase
 }
 
 func NewExpenseHandler(r *gin.RouterGroup, expUCase domain.ExpenseUseCase) {
 	handler := &ExpenseHandler{
-		expUCase,
+		ExpUCase: expUCase,
 	}
 
 	er := r.Group("/expenses")
@@ -37,7 +37,7 @@ func (h *ExpenseHandler) CreateExpense(c *gin.Context) {
 		return
 	}
 
-	res, err := h.expUCase.CreateExpense(c.Request.Context(), body)
+	res, err := h.ExpUCase.CreateExpense(c.Request.Context(), body)
 	if err != nil {
 		logrus.Error(err)
 		c.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
@@ -48,7 +48,7 @@ func (h *ExpenseHandler) CreateExpense(c *gin.Context) {
 }
 
 func (h *ExpenseHandler) GetExpenses(ctx *gin.Context) {
-	res, err := h.expUCase.GetExpenses(ctx.Request.Context())
+	res, err := h.ExpUCase.GetExpenses(ctx.Request.Context())
 	if err != nil {
 		logrus.Error(err)
 		ctx.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
@@ -67,7 +67,7 @@ func (h *ExpenseHandler) GetExpensesById(ctx *gin.Context) {
 		return
 	}
 
-	res, err := h.expUCase.GetExpensesById(ctx.Request.Context(), uId)
+	res, err := h.ExpUCase.GetExpensesById(ctx.Request.Context(), uId)
 	if err != nil {
 		logrus.Error(err)
 		ctx.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
@@ -92,7 +92,7 @@ func (h *ExpenseHandler) UpdateExpense(ctx *gin.Context) {
 		return
 	}
 
-	res, err := h.expUCase.UpdateExpense(ctx.Request.Context(), uId, body)
+	res, err := h.ExpUCase.UpdateExpense(ctx.Request.Context(), uId, body)
 	if err != nil {
 		logrus.Error(err)
 		ctx.JSON(apperrors.Status(err), domain.BaseResponse{Message: err.Error()})
