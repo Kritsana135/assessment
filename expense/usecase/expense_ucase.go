@@ -25,7 +25,6 @@ func (e *expenseUsecase) GetExpenses(ctx context.Context) ([]domain.ExpenseTable
 	return expenses, nil
 }
 
-// TODO: add test
 // UpdateExpense implements domain.ExpenseUseCase
 func (e *expenseUsecase) UpdateExpense(ctx context.Context, id uint64, req domain.UpdateExpenseReq) (domain.ExpenseTable, error) {
 	expense := domain.ExpenseTable{
