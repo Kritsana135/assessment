@@ -17,7 +17,7 @@ import (
 )
 
 func TestCreateExpense(t *testing.T) {
-	t.Run("ce_1:the request body failed because the required field is missing.", func(t *testing.T) {
+	t.Run("ceh_1:the request body failed because the required field is missing.", func(t *testing.T) {
 		bodies := []string{
 			`{
 				"amount": 79,
@@ -46,7 +46,7 @@ func TestCreateExpense(t *testing.T) {
 		}
 	})
 
-	t.Run("ce_2:should get error when create", func(t *testing.T) {
+	t.Run("ceh_2:should get error when create", func(t *testing.T) {
 		body := `{
 				  "title": "night market",
 				  "amount": 79,
@@ -78,7 +78,7 @@ func TestCreateExpense(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
-	t.Run("ce_3:should get 201 status", func(t *testing.T) {
+	t.Run("ceh_3:should get 201 status", func(t *testing.T) {
 		body := `{
 				  "title": "night market",
 				  "amount": 79,
@@ -112,5 +112,43 @@ func TestCreateExpense(t *testing.T) {
 
 		assert.Equal(t, http.StatusCreated, w.Code)
 		assert.Equal(t, "night market", res.Title)
+	})
+}
+
+func TestGetExpenses(t *testing.T) {
+	t.Run("geh_1:should get error when get expenses", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+
+		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
+		mockExpenseUseCase.On("GetExpenses", ctx.Request.Context()).
+			Return([]domain.ExpenseTable{}, apperrors.NewInternal())
+		handler := http_.ExpenseHandler{
+			ExpUCase: mockExpenseUseCase,
+		}
+
+		handler.GetExpenses(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("geh_2:should get 200 status", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+
+		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
+		mockExpenseUseCase.On("GetExpenses", ctx.Request.Context()).
+			Return([]domain.ExpenseTable{{Title: "night market"}}, nil)
+		handler := http_.ExpenseHandler{
+			ExpUCase: mockExpenseUseCase,
+		}
+
+		handler.GetExpenses(ctx)
+
+		var res []domain.ExpenseTable
+		json.NewDecoder(w.Body).Decode(&res)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "night market", res[0].Title)
 	})
 }
