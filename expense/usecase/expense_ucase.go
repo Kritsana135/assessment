@@ -62,7 +62,7 @@ func (e *expenseUsecase) GetExpensesById(ctx context.Context, id uint64) (domain
 }
 
 // CreateExpense implements domain.ExpenseUseCase
-func (e *expenseUsecase) CreateExpense(ctx context.Context, req domain.CrateExpenseReq) (domain.ExpenseTable, error) {
+func (e *expenseUsecase) CreateExpense(ctx context.Context, req domain.CreateExpenseReq) (domain.ExpenseTable, error) {
 	expense := domain.ExpenseTable{
 		Title:  req.Title,
 		Amount: req.Amount,

@@ -9,3 +9,6 @@ docker-stop:
 
 dev-air: $(AIR) ## Starts AIR ( Continuous Development app).
 	air
+
+upd-cov: 
+	@ go test ./... -coverprofile coverage.out
