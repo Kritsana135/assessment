@@ -38,3 +38,27 @@ func TestGetExpenses(t *testing.T) {
 		assert.Equal(t, int(1), expense[0].ID)
 	})
 }
+
+func TestCreateExpense(t *testing.T) {
+	ctx := context.Background()
+	t.Run("ce_1: error when create", func(t *testing.T) {
+		mockExpenseRepo := mocks.NewExpenseRepository(t)
+		mockExpenseRepo.On("Create", ctx, &domain.ExpenseTable{Title: "test", Amount: 100, Note: "test"}).Return(errors.New("error"))
+		expUCase := usecase.NewExpUsecase(mockExpenseRepo)
+
+		_, err := expUCase.CreateExpense(ctx, domain.CreateExpenseReq{Title: "test", Amount: 100, Note: "test"})
+
+		assert.Error(t, err)
+		assert.Equal(t, apperrors.NewInternal().Message, err.Error())
+	})
+
+	t.Run("ce_2: success", func(t *testing.T) {
+		mockExpenseRepo := mocks.NewExpenseRepository(t)
+		mockExpenseRepo.On("Create", ctx, &domain.ExpenseTable{Title: "test", Amount: 100, Note: "test"}).Return(nil)
+		expUCase := usecase.NewExpUsecase(mockExpenseRepo)
+
+		_, err := expUCase.CreateExpense(ctx, domain.CreateExpenseReq{Title: "test", Amount: 100, Note: "test"})
+
+		assert.NoError(t, err)
+	})
+}

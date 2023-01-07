@@ -15,18 +15,18 @@ type ExpenseUseCase struct {
 }
 
 // CreateExpense provides a mock function with given fields: ctx, req
-func (_m *ExpenseUseCase) CreateExpense(ctx context.Context, req domain.CrateExpenseReq) (domain.ExpenseTable, error) {
+func (_m *ExpenseUseCase) CreateExpense(ctx context.Context, req domain.CreateExpenseReq) (domain.ExpenseTable, error) {
 	ret := _m.Called(ctx, req)
 
 	var r0 domain.ExpenseTable
-	if rf, ok := ret.Get(0).(func(context.Context, domain.CrateExpenseReq) domain.ExpenseTable); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.CreateExpenseReq) domain.ExpenseTable); ok {
 		r0 = rf(ctx, req)
 	} else {
 		r0 = ret.Get(0).(domain.ExpenseTable)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, domain.CrateExpenseReq) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, domain.CreateExpenseReq) error); ok {
 		r1 = rf(ctx, req)
 	} else {
 		r1 = ret.Error(1)

@@ -30,7 +30,7 @@ func NewExpenseHandler(r *gin.RouterGroup, expUCase domain.ExpenseUseCase) {
 }
 
 func (h *ExpenseHandler) CreateExpense(c *gin.Context) {
-	var body domain.CrateExpenseReq
+	var body domain.CreateExpenseReq
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, domain.BaseResponse{Message: err.Error()})

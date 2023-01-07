@@ -62,7 +62,7 @@ func TestCreateExpense(t *testing.T) {
 		ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte(body)))
 
 		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
-		parseBody := domain.CrateExpenseReq{
+		parseBody := domain.CreateExpenseReq{
 			Title:  "night market",
 			Amount: 79,
 			Note:   "night market promotion discount 10 bath",
@@ -94,7 +94,7 @@ func TestCreateExpense(t *testing.T) {
 		ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte(body)))
 
 		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
-		parseBody := domain.CrateExpenseReq{
+		parseBody := domain.CreateExpenseReq{
 			Title:  "night market",
 			Amount: 79,
 			Note:   "night market promotion discount 10 bath",

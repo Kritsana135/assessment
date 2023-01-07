@@ -21,12 +21,12 @@ type (
 		GetExpenses(ctx context.Context) ([]ExpenseTable, error)
 	}
 	ExpenseUseCase interface {
-		CreateExpense(ctx context.Context, req CrateExpenseReq) (ExpenseTable, error)
+		CreateExpense(ctx context.Context, req CreateExpenseReq) (ExpenseTable, error)
 		GetExpensesById(ctx context.Context, id uint64) (ExpenseTable, error)
 		UpdateExpense(ctx context.Context, id uint64, req UpdateExpenseReq) (ExpenseTable, error)
 		GetExpenses(ctx context.Context) ([]ExpenseTable, error)
 	}
-	CrateExpenseReq struct {
+	CreateExpenseReq struct {
 		Title  string   `json:"title" binding:"required"`
 		Amount float64  `json:"amount" binding:"required"`
 		Note   string   `json:"note"`
