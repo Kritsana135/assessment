@@ -13,6 +13,7 @@ import (
 	"github.com/Kritsana135/assessment/domain/mocks"
 	"github.com/Kritsana135/assessment/expense/delivery/http_"
 	"github.com/Kritsana135/assessment/misc"
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -150,5 +151,61 @@ func TestGetExpenses(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Equal(t, "night market", res[0].Title)
+	})
+}
+
+func TestGetExpensesById(t *testing.T) {
+	t.Run("gebih_1:should get bad request status", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+		ctx.Params = gin.Params{{Key: "id", Value: "abc"}}
+
+		handler := http_.ExpenseHandler{}
+
+		handler.GetExpensesById(ctx)
+
+		var res domain.BaseResponse
+		json.NewDecoder(w.Body).Decode(&res)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Equal(t, "invalid id", res.Message)
+	})
+
+	t.Run("gebih_2:should get error when get expenses by id", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+		ctx.Params = gin.Params{{Key: "id", Value: "1"}}
+
+		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
+		mockExpenseUseCase.On("GetExpensesById", ctx.Request.Context(), uint64(1)).
+			Return(domain.ExpenseTable{}, apperrors.NewInternal())
+		handler := http_.ExpenseHandler{
+			ExpUCase: mockExpenseUseCase,
+		}
+
+		handler.GetExpensesById(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("gebih_3:should get 200 status", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		ctx := misc.GetTestGinContext(w)
+		ctx.Params = gin.Params{{Key: "id", Value: "1"}}
+
+		mockExpenseUseCase := mocks.NewExpenseUseCase(t)
+		mockExpenseUseCase.On("GetExpensesById", ctx.Request.Context(), uint64(1)).
+			Return(domain.ExpenseTable{Title: "night market"}, nil)
+		handler := http_.ExpenseHandler{
+			ExpUCase: mockExpenseUseCase,
+		}
+
+		handler.GetExpensesById(ctx)
+
+		var res domain.ExpenseTable
+		json.NewDecoder(w.Body).Decode(&res)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "night market", res.Title)
 	})
 }
