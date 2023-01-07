@@ -25,6 +25,7 @@ func (e *expenseUsecase) GetExpenses(ctx context.Context) ([]domain.ExpenseTable
 	return expenses, nil
 }
 
+// TODO: add test
 // UpdateExpense implements domain.ExpenseUseCase
 func (e *expenseUsecase) UpdateExpense(ctx context.Context, id uint64, req domain.UpdateExpenseReq) (domain.ExpenseTable, error) {
 	expense := domain.ExpenseTable{
@@ -47,6 +48,7 @@ func (e *expenseUsecase) UpdateExpense(ctx context.Context, id uint64, req domai
 	return expense, err
 }
 
+// TODO: add test
 // GetExpensesById implements domain.ExpenseUseCase
 func (e *expenseUsecase) GetExpensesById(ctx context.Context, id uint64) (domain.ExpenseTable, error) {
 	expense, err := e.expenseRepo.GetExpensesById(ctx, id)
@@ -61,6 +63,7 @@ func (e *expenseUsecase) GetExpensesById(ctx context.Context, id uint64) (domain
 	return expense, err
 }
 
+// TODO: add test
 // CreateExpense implements domain.ExpenseUseCase
 func (e *expenseUsecase) CreateExpense(ctx context.Context, req domain.CrateExpenseReq) (domain.ExpenseTable, error) {
 	expense := domain.ExpenseTable{
